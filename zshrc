@@ -4,7 +4,7 @@ ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="robbyrussell"
 
 # Useful oh-my-zsh plugins for Le Wagon bootcamps
-plugins=(git gitfast last-working-dir common-aliases zsh-syntax-highlighting history-substring-search pyenv)
+plugins=(git gitfast last-working-dir common-aliases zsh-syntax-highlighting history-substring-search pyenv ssh-agent)
 
 # (macOS-only) Prevent Homebrew from reporting - https://github.com/Homebrew/brew/blob/master/docs/Analytics.md
 export HOMEBREW_NO_ANALYTICS=1
@@ -70,3 +70,21 @@ export EDITOR=code
 
 # Set ipdb as the default Python debugger
 export PYTHONBREAKPOINT=ipdb.set_trace
+# Add grpcurl to PATH
+PATH=$PATH:$HOME/.grpcurl/bin/
+PATH=$PATH:$HOME/.local/bin
+PATH=$PATH:$HOME/.poetry/bin
+
+_direnv_hook() {
+  trap -- '' SIGINT;
+  eval "$("/usr/bin/direnv" export zsh)";
+  trap - SIGINT;
+}
+typeset -ag precmd_functions;
+if [[ -z ${precmd_functions[(r)_direnv_hook]} ]]; then
+  precmd_functions=( _direnv_hook ${precmd_functions[@]} )
+fi
+typeset -ag chpwd_functions;
+if [[ -z ${chpwd_functions[(r)_direnv_hook]} ]]; then
+  chpwd_functions=( _direnv_hook ${chpwd_functions[@]} )
+fi
